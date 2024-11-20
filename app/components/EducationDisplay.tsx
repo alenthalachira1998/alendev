@@ -30,7 +30,7 @@ const DeleteEducationButton: React.FC<{ id: string; onDelete: () => void }> = ({
     setIsDeleting(false);
     onDelete();
     toast({
-      title: "Education Deleted",
+      title: "Education is  Deleted",
       description: "The education entry has been successfully removed.",
     })
   };
