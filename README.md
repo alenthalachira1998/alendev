@@ -1,2 +1,2 @@
 next js portfolio by alen dev 2024
-SE
+SE || software engineer || alen dev
