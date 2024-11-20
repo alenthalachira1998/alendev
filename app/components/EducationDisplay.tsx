@@ -39,7 +39,7 @@ const DeleteEducationButton: React.FC<{ id: string; onDelete: () => void }> = ({
     <form action={handleDelete}>
       <input type="hidden" name="id" value={id} />
       <Button variant="destructive" type="submit" disabled={isDeleting} className="mt-2">
-        {isDeleting ? 'Deleting...' : 'Delete'}
+        {isDeleting ? 'Deleting....' : 'Delete'}
       </Button>
     </form>
   );
