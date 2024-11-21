@@ -53,7 +53,10 @@ const EditIntroDialog: React.FC<{ intro: Intro | null; onSubmit: (updatedIntro: 
         window.location.reload();
       }
     } else if (result.errors) {
-      setErrors(result.errors);
+      const filteredErrors = Object.fromEntries(
+        Object.entries(result.errors).filter(([_, v]) => v !== undefined)
+      ) as { [key: string]: string | string[] };
+      setErrors(filteredErrors);
     }
   };
 

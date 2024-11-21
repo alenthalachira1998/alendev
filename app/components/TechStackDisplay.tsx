@@ -84,7 +84,13 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
       setNewTechStack({ name: '', category: '', proficiencyLevel: '' });
       onUpdate();
     } else if (result.errors) {
-      setErrors(result.errors);
+      const formattedErrors = Object.fromEntries(
+        Object.entries(result.errors).map(([key, value]) => [
+          key,
+          Array.isArray(value) ? value : [(value as any)?.toString() || '']
+        ])
+      );
+      setErrors(formattedErrors);
     }
   };
 
@@ -100,7 +106,7 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
         description: result.message,
       })
       onUpdate();
-    } else if (result.errors.form) {
+    } else if (result.errors?.form) {
       toast({
         title: "Error",
         description: result.errors.form[0],

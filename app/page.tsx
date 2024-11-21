@@ -14,7 +14,7 @@ const DynamicPortfolio = dynamic(() => import('./portfolio/page'), {
 export default async function Home() {
   const text = "Alen Jose Software Dev";
   const portfolioRef = useRef<HTMLDivElement>(null);
-  const techStack = await loadTechStack();
+
   
   const scrollToPortfolio = () => {
     portfolioRef.current?.scrollIntoView({ behavior: 'smooth' });

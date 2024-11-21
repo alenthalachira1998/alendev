@@ -29,7 +29,7 @@ interface ExperienceFormProps {
 export default function ExperienceForm({ experience = null, onSubmit }: ExperienceFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
-  const [errors, setErrors] = useState<{ [key: string]: string | string[] }>({})
+  const [errors, setErrors] = useState<{ [key: string]: string | string[] | undefined }>({})
 
   const form = useForm<z.infer<typeof jobExperienceSchema>>({
     resolver: zodResolver(jobExperienceSchema),

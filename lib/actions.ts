@@ -17,11 +17,12 @@ export type NewJobExperience = Omit<JobExperience, 'id'>
 
 export type ExperienceFormData = NewJobExperience
 
-export type State = {
-  message: string | null
-  errors: {
-    [key: string]: string[]
-  }
+export interface State {
+  message?: string;
+  errors?: {
+    [key: string]: string[] | undefined;
+    form?: string[];
+  };
 }
 
 export async function loadExperiences(): Promise<JobExperience[]> {
@@ -30,12 +31,14 @@ export async function loadExperiences(): Promise<JobExperience[]> {
 
 export async function createExperience(prevState: State, formData: FormData): Promise<State> {
   try {
+    const startDate = formData.get('startDate') as string
+    const endDate = formData.get('endDate') as string
     const data: ExperienceFormData = {
       company: formData.get('company') as string,
       title: formData.get('title') as string,
       description: formData.get('description') as string,
-      startDate: new Date(formData.get('startDate') as string).toISOString(),
-      endDate: new Date(formData.get('endDate') as string).toISOString(),
+      startDate,
+      endDate,
     }
 
     // Validate required fields
@@ -47,13 +50,18 @@ export async function createExperience(prevState: State, formData: FormData): Pr
     if (!data.endDate) errors.endDate = ['End date is required'];
 
     if (Object.keys(errors).length > 0) {
-      return { message: null, errors };
+      return { message: undefined, errors };
     }
     
     await db.insert(jobExperiences).values(data)
     return { message: 'Experience created successfully', errors: {} }
   } catch (error) {
-    return handleError(error)
+    return {
+      message: '',
+      errors: {
+        form: ['An unexpected error occurred']
+      }
+    }
   }
 }
 
@@ -61,7 +69,7 @@ export async function updateExperience(prevState: State, formData: FormData): Pr
   try {
     const id = formData.get('id') as string
     if (!id) {
-      return { message: null, errors: { form: ['ID is required for update'] } }
+      return { message: undefined, errors: { form: ['ID is required for update'] } }
     }
 
     const data: ExperienceFormData = {
@@ -188,7 +196,7 @@ export async function createTechStack(prevState: State, formData: FormData): Pro
     else if (isNaN(parseInt(yearsOfExperience))) errors.yearsOfExperience = ['Years of experience must be a number']
 
     if (Object.keys(errors).length > 0) {
-      return { message: null, errors }
+      return { message: undefined, errors }
     }
 
     const data: NewTechStack = {
@@ -251,7 +259,7 @@ export async function createProject(prevState: State, formData: FormData): Promi
 
     if (!title || !description || !technologies || !startDate) {
       return { 
-        message: null, 
+        message: undefined, 
         errors: { 
           form: ['All required fields must be filled'] 
         } 

@@ -54,7 +54,7 @@ const DeleteEducationButton: React.FC<{ id: string; onDelete: () => void }> = ({
 const AddEducationDialog: React.FC<{ onAdd: () => void }> = ({ onAdd }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
-  const [errors, setErrors] = useState<{ [key: string]: string | string[] }>({});
+  const [errors, setErrors] = useState<{ [key: string]: string | string[] | undefined }>({});
   const { toast } = useToast()
 
   const validateForm = (formData: FormData): boolean => {

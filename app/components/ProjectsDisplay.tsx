@@ -63,7 +63,7 @@ const DeleteProjectButton: React.FC<{ id: string; onDelete: () => void }> = ({ i
 const AddEditProjectDialog: React.FC<{ project?: Project | null; onSubmit: () => void }> = ({ project, onSubmit }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState<{[key: string]: string | string[]}>({});
+  const [errors, setErrors] = useState<{[key: string]: string | string[] | undefined}>({});
   const { toast } = useToast()
 
   const validateForm = (formData: FormData) => {

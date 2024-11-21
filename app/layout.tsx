@@ -20,6 +20,7 @@ const raleway = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://alendev.vercel.app/'),
   title: "Alen Jose | Alen Thalachira | Software Developer",
   description: "I'm Alen Jose (Alen Thalachira), a fullstack web/mobile Software developer with years of experience in JavaScript, React, Node.js, and modern web technologies. Based in Waterloo, Ontario, specializing in building scalable applications.",
   keywords: [
