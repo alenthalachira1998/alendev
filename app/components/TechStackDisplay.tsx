@@ -97,7 +97,7 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
   return (
     <div className={`space-y-4 ${raleway.className}`}>
       {isAuthenticated && (
-        <Dialog >
+        <Dialog>
           <DialogTrigger asChild>
             <Button className="mb-4 bg-white text-black">Add Tech Stack</Button>
           </DialogTrigger>
@@ -130,29 +130,38 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
         </Dialog>
       )}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {techStack.map((tech) => (
-          <Card key={tech.id} className="flex flex-col">
-            <CardHeader>
-              <CardTitle>{tech.name}</CardTitle>
-              <CardDescription>{tech.category}</CardDescription>
-            </CardHeader>
-            <CardContent className="flex-grow">
-              <div className="mb-2">
-                <Label>Proficiency:</Label>
-                <ProficiencyBar level={tech.proficiencyLevel} />
-                <span className="text-sm text-gray-500">{tech.proficiencyLevel}/10</span>
-              </div>
-              <p>Experience: {tech.yearsOfExperience} years</p>
-            </CardContent>
-            <CardFooter className="justify-end">
+        {techStack.length === 0 ? (
+          <p className="text-center text-gray-500 col-span-full">No tech stack items available.</p>
+        ) : (
+          techStack.map((tech) => (
+            <Card key={tech.id} className="flex flex-col">
+              <CardHeader>
+                <CardTitle>{tech.name}</CardTitle>
+                <CardDescription>{tech.category}</CardDescription>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <div className="mb-2">
+                  <Label>Proficiency:</Label>
+                  <ProficiencyBar level={tech.proficiencyLevel} />
+                  <span className="text-sm text-gray-500">{tech.proficiencyLevel}/10</span>
+                </div>
+                <p>Experience: {tech.yearsOfExperience} years</p>
+              </CardContent>
               {isAuthenticated && (
-                <Button onClick={() => handleDelete(tech.id)} disabled={isDeleting} variant="destructive" className="bg-white text-black">
-                  {isDeleting ? 'Deleting...' : 'Delete'}
-                </Button>
+                <CardFooter className="justify-end">
+                  <Button 
+                    onClick={() => handleDelete(tech.id)} 
+                    disabled={isDeleting} 
+                    variant="destructive" 
+                    className="bg-white text-black"
+                  >
+                    {isDeleting ? 'Deleting...' : 'Delete'}
+                  </Button>
+                </CardFooter>
               )}
-            </CardFooter>
-          </Card>
-        ))}
+            </Card>
+          ))
+        )}
       </div>
     </div>
   );
