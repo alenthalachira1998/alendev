@@ -5,15 +5,17 @@ import dynamic from 'next/dynamic';
 import Image from "next/image";
 import styles from './styles/Home.module.scss';
 import SideNav from "./components/layouts/sidenav";
+import { loadTechStack } from '../lib/actions';
 
 const DynamicPortfolio = dynamic(() => import('./portfolio/page'), {
   loading: () => <p>Loading...</p>,
 });
 
-export default function Home() {
+export default async function Home() {
   const text = "Alen Jose Software Dev";
   const portfolioRef = useRef<HTMLDivElement>(null);
- 
+  const techStack = await loadTechStack();
+  
   const scrollToPortfolio = () => {
     portfolioRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -62,6 +64,7 @@ export default function Home() {
       <div ref={portfolioRef} className={styles.portfolioSection}>
         <DynamicPortfolio />
       </div>
+   
     </div>
   );
 }

@@ -47,8 +47,14 @@ const DeleteProjectButton: React.FC<{ id: string; onDelete: () => void }> = ({ i
   return (
     <form action={handleDelete}>
       <input type="hidden" name="id" value={id} />
-      <Button variant="destructive" type="submit" disabled={isDeleting}>
-        {isDeleting ? 'Deleting...' : 'Delete'}
+      <Button 
+        variant="destructive" 
+        type="submit" 
+        disabled={isDeleting}
+        size="sm"
+        className="h-7 text-xs"
+      >
+        {isDeleting ? '...' : 'Delete'}
       </Button>
     </form>
   );
@@ -144,7 +150,7 @@ const ProjectsDisplay: React.FC<ProjectsDisplayProps> = ({ projects: initialProj
   const isAuthenticated = !!userId;
   const [refreshKey, setRefreshKey] = useState(0);
   const [projects, setProjects] = useState<Project[]>(initialProjects);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const refreshData = useCallback(() => {
     setRefreshKey(oldKey => oldKey + 1);
@@ -165,32 +171,88 @@ const ProjectsDisplay: React.FC<ProjectsDisplayProps> = ({ projects: initialProj
   }, [refreshKey]);
 
   return (
-    <div className={`space-y-4 ${raleway.className}`}>
-      {isAuthenticated && !isLoading && <AddEditProjectDialog project={null} onSubmit={refreshData} />}
+    <div className="w-full max-w-[800px] px-4 mx-auto space-y-6">
+      {isAuthenticated && (
+        <div className="w-full">
+          <AddEditProjectDialog project={null} onSubmit={refreshData} />
+        </div>
+      )}
+      
       {isLoading ? (
         <p>Loading...</p>
+      ) : !projects || projects.length === 0 ? (
+        <Card className="border-none shadow-sm w-full">
+          <CardContent className="pt-6">
+            <p className="text-sm text-gray-500">No projects available.</p>
+          </CardContent>
+        </Card>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className={`${raleway.className} space-y-4 w-full`}>
           {projects.map((project) => (
-            <Card key={project.id}>
-              <CardHeader>
-                <CardTitle>{project.title}</CardTitle>
-                <CardDescription>Technologies: {(project.technologies as string[]).join(', ')}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p>{project.description}</p>
-                <p className="text-sm text-gray-500">{project.startDate} - {project.endDate}</p>
-                <div className="mt-2">
-                  {project.githubUrl && <a href={project.githubUrl} className="mr-4">GitHub</a>}
-                  {project.liveUrl && <a href={project.liveUrl}>Live Demo</a>}
+            <Card key={project.id} className="overflow-hidden border-none shadow-sm w-full">
+              <CardHeader className="border-b bg-gray-50 dark:bg-gray-800 py-3 px-4">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                  <div>
+                    <CardTitle className="text-[13px] sm:text-sm font-medium">{project.title}</CardTitle>
+                    <CardDescription className="text-[10px] sm:text-xs mt-1">
+                      {project.startDate} - {project.endDate || 'Present'}
+                    </CardDescription>
+                  </div>
+                  {isAuthenticated && (
+                    <div className="flex gap-2">
+                      <AddEditProjectDialog project={project} onSubmit={refreshData} />
+                      <DeleteProjectButton id={project.id} onDelete={refreshData} />
+                    </div>
+                  )}
                 </div>
-                {project.imageUrl && <img src={project.imageUrl} alt={project.title} className="mt-4 w-full" />}
+              </CardHeader>
+              <CardContent className="p-4 space-y-3">
+                <p className="text-[11px] sm:text-xs text-gray-600">{project.description}</p>
+                
+                <div className="flex flex-wrap gap-2">
+                  {project.technologies.map((tech, index) => (
+                    <span 
+                      key={index}
+                      className="px-2 py-1 bg-gray-100 text-gray-700 rounded-md text-[9px] sm:text-[10px] font-medium"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+
+                {(project.githubUrl || project.liveUrl) && (
+                  <div className="flex gap-3 pt-2">
+                    {project.githubUrl && (
+                      <a 
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[10px] sm:text-xs text-gray-600 hover:text-black transition-colors"
+                      >
+                        GitHub →
+                      </a>
+                    )}
+                    {project.liveUrl && (
+                      <a 
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[10px] sm:text-xs text-gray-600 hover:text-black transition-colors"
+                      >
+                        Live Demo →
+                      </a>
+                    )}
+                  </div>
+                )}
+
+                {project.imageUrl && (
+                  <img 
+                    src={project.imageUrl} 
+                    alt={project.title} 
+                    className="w-full h-auto rounded-md mt-3 object-cover"
+                  />
+                )}
               </CardContent>
-              {isAuthenticated && (
-                <CardFooter>
-                  <DeleteProjectButton id={project.id} onDelete={refreshData} />
-                </CardFooter>
-              )}
             </Card>
           ))}
         </div>

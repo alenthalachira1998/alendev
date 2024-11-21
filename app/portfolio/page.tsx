@@ -62,25 +62,22 @@ const PortfolioPage: React.FC = () => {
  
       <main className={styles.content}>
         <section id="intro" className={`${styles.section} ${activeSection === 'intro' ? styles.visible : styles.hidden}`}>
-          <h2>Introduction</h2>
+         
           <IntroDisplay intro={intro} isLoading={false} />
         </section>
-        <SignedIn>
-          <section id="tech-stack" className={`${styles.section} ${activeSection === 'tech-stack' ? styles.visible : styles.hidden}`}>
-            <h2>Tech Stack</h2>
-            <TechStackDisplay techStack={techStacks} onUpdate={refreshTechStack} />
-          </section>
-        </SignedIn>
+        <section id="tech-stack" className={`${styles.section} ${activeSection === 'tech-stack' ? styles.visible : styles.hidden}`}>
+          <TechStackDisplay techStack={techStacks} onUpdate={refreshTechStack} />
+        </section>
         <section id="education" className={`${styles.section} ${activeSection === 'education' ? styles.visible : styles.hidden}`}>
-          <h2>Education</h2>
+      
           <EducationDisplay />
         </section>
         <section id="experience" className={`${styles.section} ${activeSection === 'experience' ? styles.visible : styles.hidden}`}>
-          <h2>Experience</h2>
+        
           <ExperienceDisplay experiences={experiences} />
         </section>
         <section id="projects" className={`${styles.section} ${activeSection === 'projects' ? styles.visible : styles.hidden}`}>
-          <h2>Projects</h2>
+       
           <ProjectsDisplay projects={projects.map(project => ({
             ...project,
             technologies: Array.isArray(project.technologies) ? project.technologies : []

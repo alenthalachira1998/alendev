@@ -20,8 +20,66 @@ const raleway = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Alen Jose Software Dev",
-  description: "I'm a fullstack web/mobile Software developer with years Of Experince especially  in Javascript based technologies. Currently i live in Waterloo Ontario",
+  title: "Alen Jose | Alen Thalachira | Software Developer",
+  description: "I'm Alen Jose (Alen Thalachira), a fullstack web/mobile Software developer with years of experience in JavaScript, React, Node.js, and modern web technologies. Based in Waterloo, Ontario, specializing in building scalable applications.",
+  keywords: [
+    "Alen Jose",
+    "Alen Thalachira",
+    "Alen Jose Thalachira",
+    "Software Developer",
+    "Full Stack Developer",
+    "Web Developer",
+    "Mobile Developer",
+    "JavaScript Developer",
+    "React Developer",
+    "Node.js Developer",
+    "TypeScript",
+    "Next.js",
+    "Frontend Development",
+    "Backend Development",
+    "Waterloo",
+    "Ontario",
+    "Canada",
+    "Software Engineering",
+    "Web Applications",
+    "Mobile Applications",
+    "REST API",
+    "Database Design",
+    "UI/UX Development",
+    "Cloud Computing",
+    "AWS",
+    "DevOps",
+    "Agile Development"
+  ],
+  authors: [{ name: "Alen Jose Thalachira" }],
+  creator: "Alen Jose Thalachira",
+  publisher: "Alen Jose",
+  robots: "index, follow",
+  openGraph: {
+    type: "website",
+    locale: "en_CA",
+    url: "https://alendev.vercel.app/",
+    siteName: "Alen Jose Thalachira - Software Developer Portfolio",
+    title: "Alen Jose | Alen Thalachira | Full Stack Developer Portfolio",
+    description: "Professional portfolio of Alen Jose (Alen Thalachira), a Full Stack Developer based in Waterloo, Ontario. Specializing in modern web and mobile development technologies.",
+    images: [
+      {
+        url: "/images/banner.png",
+        width: 1200,
+        height: 630,
+        alt: "Alen Jose Thalachira - Software Developer",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Alen Jose | Alen Thalachira | Full Stack Developer",
+    description: "Full Stack Developer specializing in modern web technologies. Based in Waterloo, Ontario.",
+    images: ["/images/banner.png"],
+  },
+  alternates: {
+    canonical: "https://alenthalachira.com",
+  },
 };
 
 export default function RootLayout({

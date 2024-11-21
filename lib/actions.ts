@@ -34,9 +34,22 @@ export async function createExperience(prevState: State, formData: FormData): Pr
       company: formData.get('company') as string,
       title: formData.get('title') as string,
       description: formData.get('description') as string,
-      startDate: formData.get('startDate') as string,
-      endDate: formData.get('endDate') as string,
+      startDate: new Date(formData.get('startDate') as string).toISOString(),
+      endDate: new Date(formData.get('endDate') as string).toISOString(),
     }
+
+    // Validate required fields
+    const errors: { [key: string]: string[] } = {};
+    if (!data.company) errors.company = ['Company is required'];
+    if (!data.title) errors.title = ['Title is required'];
+    if (!data.description) errors.description = ['Description is required'];
+    if (!data.startDate) errors.startDate = ['Start date is required'];
+    if (!data.endDate) errors.endDate = ['End date is required'];
+
+    if (Object.keys(errors).length > 0) {
+      return { message: null, errors };
+    }
+    
     await db.insert(jobExperiences).values(data)
     return { message: 'Experience created successfully', errors: {} }
   } catch (error) {
@@ -47,16 +60,23 @@ export async function createExperience(prevState: State, formData: FormData): Pr
 export async function updateExperience(prevState: State, formData: FormData): Promise<State> {
   try {
     const id = formData.get('id') as string
-    if (!id) throw new Error('ID is required for update')
+    if (!id) {
+      return { message: null, errors: { form: ['ID is required for update'] } }
+    }
 
     const data: ExperienceFormData = {
       company: formData.get('company') as string,
       title: formData.get('title') as string,
       description: formData.get('description') as string,
-      startDate: formData.get('startDate') as string,
-      endDate: formData.get('endDate') as string,
+      startDate: new Date(formData.get('startDate') as string).toISOString(),
+      endDate: new Date(formData.get('endDate') as string).toISOString(),
     }
-    await db.update(jobExperiences).set(data).where(eq(jobExperiences.id, id))
+
+    await db
+      .update(jobExperiences)
+      .set(data)
+      .where(eq(jobExperiences.id, id))
+
     return { message: 'Experience updated successfully', errors: {} }
   } catch (error) {
     return handleError(error)

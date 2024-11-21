@@ -44,7 +44,7 @@ const SideNav = () => {
           <li>
             <SignedOut>
               <SignInButton mode="modal">
-                <button className={styles.signInButton}>
+                <button className="text-[10px] text-gray-400 hover:text-gray-600 mt-auto">
                  Admin
                 </button>
               </SignInButton>

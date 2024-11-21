@@ -38,8 +38,14 @@ const DeleteEducationButton: React.FC<{ id: string; onDelete: () => void }> = ({
   return (
     <form action={handleDelete}>
       <input type="hidden" name="id" value={id} />
-      <Button variant="destructive" type="submit" disabled={isDeleting} className="mt-2">
-        {isDeleting ? 'Deleting....' : 'Delete'}
+      <Button 
+        variant="destructive" 
+        type="submit" 
+        disabled={isDeleting}
+        size="sm"
+        className="h-7 text-[10px] sm:text-xs px-2 sm:px-3"
+      >
+        {isDeleting ? 'Deleting...' : 'Delete'}
       </Button>
     </form>
   );
@@ -93,9 +99,11 @@ const AddEducationDialog: React.FC<{ onAdd: () => void }> = ({ onAdd }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className='text-black' variant="outline">Add Education</Button>
+        <Button className="w-full sm:w-auto bg-black text-white hover:bg-gray-800">
+          Add Education
+        </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-w-[90vw] sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add Education</DialogTitle>
           <DialogDescription>
@@ -201,39 +209,58 @@ const EducationDisplay: React.FC = () => {
   }, [refreshKey]);
 
   return (
-    <div className={`relative max-w-4xl mx-auto px-4 py-8 ${raleway.className}`}>
+    <div className={`w-full max-w-[800px] px-4 mx-auto ${raleway.className}`}>
       {isAuthenticated && (
-        <div className="mb-8">
+        <div className="mb-6">
           <AddEducationDialog onAdd={refreshData} />
         </div>
       )}
-      <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-gray-200 transform -translate-x-1/2">
-        <div className="absolute top-0 left-1/2 w-4 h-4 rounded-full bg-primary border-4 border-background transform -translate-x-1/2"></div>
-        <div className="absolute bottom-0 left-1/2 w-4 h-4 rounded-full bg-primary border-4 border-background transform -translate-x-1/2"></div>
+      
+      <div className="hidden md:block absolute left-1/2 h-full w-0.5 bg-gray-200 transform -translate-x-1/2">
+        <div className="absolute top-0 left-1/2 w-3 h-3 rounded-full bg-black border-2 border-white transform -translate-x-1/2"></div>
+        <div className="absolute bottom-0 left-1/2 w-3 h-3 rounded-full bg-black border-2 border-white transform -translate-x-1/2"></div>
       </div>
+
       {educations.map((edu, index) => (
         <div key={edu.id} className="relative mb-8 group">
-          <div className="hidden md:block absolute left-1/2 top-5 w-6 h-6 bg-primary rounded-full transform -translate-x-1/2 border-4 border-background z-10 shadow-md transition-all duration-300 group-hover:scale-110"></div>
-          <Card className="md:w-[calc(50%-1rem)] md:even:ml-[calc(50%+1rem)] shadow-lg hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1">
-            <CardContent className="p-4">
+          <div className="hidden md:block absolute left-1/2 top-5 w-4 h-4 bg-black rounded-full transform -translate-x-1/2 border-2 border-white z-10 shadow-md transition-all duration-300 group-hover:scale-110"></div>
+          
+          <Card className="md:w-[calc(50%-2rem)] md:even:ml-[calc(50%+2rem)] shadow-sm hover:shadow-md transition-all duration-300 border-none">
+            <CardContent className="p-4 sm:p-5">
               <div className="flex items-center mb-2">
-                <GraduationCapIcon className="w-4 h-4 text-primary mr-2" />
-                <h3 className="text-lg font-semibold">{edu.degree} in {edu.fieldOfStudy}</h3>
+                <GraduationCapIcon className="w-3 h-3 text-gray-600 mr-2" />
+                <h3 className="text-xs sm:text-sm font-medium">{edu.degree} in {edu.fieldOfStudy}</h3>
               </div>
-              <h4 className="text-base text-gray-600 mb-2">{edu.institution}</h4>
-              <p className="mt-2 text-sm text-gray-700">{edu.description}</p>
-              <div className="mt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs text-gray-500">
-                <div className="w-full sm:w-auto mb-2 sm:mb-0 flex items-center">
+              
+              <h4 className="text-[10px] sm:text-xs text-gray-600 mb-3">{edu.institution}</h4>
+              
+              <p className="text-[10px] sm:text-xs text-gray-600 leading-relaxed">
+                {edu.description}
+              </p>
+              
+              <div className="mt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-[9px] sm:text-[10px] text-gray-500">
+                <div className="flex items-center">
                   <CalendarIcon className="w-3 h-3 mr-1" />
-                  <p>{edu.startDate} - {edu.endDate}</p>
+                  <span>{edu.startDate} - {edu.endDate}</span>
                 </div>
-                <div className="w-full sm:w-auto text-left sm:text-right flex items-center justify-start sm:justify-end">
-                  <BookOpenIcon className="w-3 h-3 mr-1" />
-                  <p className="font-semibold text-primary">Grade: {edu.grade}</p>
-                </div>
+                
+                {edu.grade && (
+                  <div className="flex items-center">
+                    <BookOpenIcon className="w-3 h-3 mr-1" />
+                    <span className="font-medium text-black">
+                      Grade: {edu.grade}
+                    </span>
+                  </div>
+                )}
               </div>
+
               {isAuthenticated && (
-                <DeleteEducationButton id={edu.id} onDelete={refreshData} />
+                <div className="mt-4 flex justify-end">
+                  <DeleteEducationButton 
+                    id={edu.id} 
+                    onDelete={refreshData}
+                  />
+                </div>
               )}
             </CardContent>
           </Card>

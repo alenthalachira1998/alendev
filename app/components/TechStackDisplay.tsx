@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { Raleway } from 'next/font/google';
+import { SignedIn } from '@clerk/nextjs';
 
 const raleway = Raleway({ subsets: ['latin'] });
 
@@ -19,10 +20,16 @@ interface TechStackDisplayProps {
 
 const ProficiencyBar: React.FC<{ level: number }> = ({ level }) => {
   const percentage = (level / 10) * 100;
+  const getColorClass = (level: number) => {
+    if (level >= 8) return 'bg-black';
+    if (level >= 5) return 'bg-gray-700';
+    return 'bg-gray-500';
+  };
+
   return (
-    <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4 dark:bg-gray-700">
+    <div className="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
       <div 
-        className="bg-blue-600 h-2.5 rounded-full dark:bg-blue-500" 
+        className={`${getColorClass(level)} h-1.5 rounded-full transition-all duration-500 ease-in-out`}
         style={{ width: `${percentage}%` }}
       ></div>
     </div>
@@ -32,11 +39,14 @@ const ProficiencyBar: React.FC<{ level: number }> = ({ level }) => {
 const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [newTechStack, setNewTechStack] = useState({ name: '', category: '', proficiencyLevel: '', yearsOfExperience: '' });
+  const [newTechStack, setNewTechStack] = useState({ 
+    name: '', 
+    category: '', 
+    proficiencyLevel: '' 
+  });
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
   const { toast } = useToast()
   const { userId } = useAuth();
-  const isAuthenticated = !!userId;
 
   const validateForm = (): boolean => {
     const newErrors: { [key: string]: string[] } = {};
@@ -44,9 +54,11 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
     if (!newTechStack.name.trim()) newErrors.name = ['Name is required'];
     if (!newTechStack.category.trim()) newErrors.category = ['Category is required'];
     if (!newTechStack.proficiencyLevel.trim()) newErrors.proficiencyLevel = ['Proficiency level is required'];
-    else if (isNaN(parseInt(newTechStack.proficiencyLevel))) newErrors.proficiencyLevel = ['Proficiency level must be a number'];
-    if (!newTechStack.yearsOfExperience.trim()) newErrors.yearsOfExperience = ['Years of experience is required'];
-    else if (isNaN(parseInt(newTechStack.yearsOfExperience))) newErrors.yearsOfExperience = ['Years of experience must be a number'];
+    else if (isNaN(parseInt(newTechStack.proficiencyLevel)) || 
+             parseInt(newTechStack.proficiencyLevel) < 1 || 
+             parseInt(newTechStack.proficiencyLevel) > 10) {
+      newErrors.proficiencyLevel = ['Proficiency level must be a number between 1 and 10'];
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -58,7 +70,10 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
     setIsLoading(true);
     setErrors({});
     const formData = new FormData();
-    Object.entries(newTechStack).forEach(([key, value]) => formData.append(key, value));
+    formData.append('name', newTechStack.name);
+    formData.append('category', newTechStack.category);
+    formData.append('proficiencyLevel', newTechStack.proficiencyLevel);
+    
     const result = await createTechStack({ message: '', errors: {} }, formData);
     setIsLoading(false);
     if (result.message) {
@@ -66,7 +81,7 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
         title: "Tech Stack Added",
         description: result.message,
       })
-      setNewTechStack({ name: '', category: '', proficiencyLevel: '', yearsOfExperience: '' });
+      setNewTechStack({ name: '', category: '', proficiencyLevel: '' });
       onUpdate();
     } else if (result.errors) {
       setErrors(result.errors);
@@ -94,21 +109,34 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
     }
   };
 
+  // Group tech stack by category
+  const groupedTechStack = techStack.reduce((acc, tech) => {
+    if (!acc[tech.category]) {
+      acc[tech.category] = [];
+    }
+    acc[tech.category].push(tech);
+    return acc;
+  }, {} as { [key: string]: TechStack[] });
+
   return (
-    <div className={`space-y-4 ${raleway.className}`}>
-      {isAuthenticated && (
+    <div className={`w-full max-w-[800px] px-4 sm:px-6 mx-auto space-y-6 ${raleway.className}`}>
+      <SignedIn>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="mb-4 bg-white text-black">Add Tech Stack</Button>
+            <Button className="mb-4 bg-black text-white hover:bg-gray-800 w-full sm:w-auto">
+              Add Tech Stack
+            </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-full sm:max-w-[425px]">
+          <DialogContent className="max-w-[90vw] sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Add New Tech Stack</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               {Object.entries(newTechStack).map(([key, value]) => (
                 <div key={key} className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
-                  <Label htmlFor={key} className="text-right capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</Label>
+                  <Label htmlFor={key} className="text-right capitalize">
+                    {key.replace(/([A-Z])/g, ' $1').trim()}
+                  </Label>
                   <div className="col-span-3 space-y-1">
                     <Input
                       id={key}
@@ -122,46 +150,50 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
               ))}
             </div>
             <DialogFooter>
-              <Button onClick={handleAdd} disabled={isLoading} className="bg-white text-black">
+              <Button onClick={handleAdd} disabled={isLoading} className="bg-white text-black hover:bg-gray-100">
                 {isLoading ? 'Adding...' : 'Add Tech Stack'}
               </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {techStack.length === 0 ? (
-          <p className="text-center text-gray-500 col-span-full">No tech stack items available.</p>
-        ) : (
-          techStack.map((tech) => (
-            <Card key={tech.id} className="flex flex-col">
-              <CardHeader>
-                <CardTitle>{tech.name}</CardTitle>
-                <CardDescription>{tech.category}</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-grow">
-                <div className="mb-2">
-                  <Label>Proficiency:</Label>
+      </SignedIn>
+
+      <div className={`${raleway.className} grid grid-cols-1 md:grid-cols-2 gap-4`}>
+        {Object.entries(groupedTechStack).map(([category, techs]) => (
+          <Card key={category} className="overflow-hidden border-none shadow-sm">
+            <CardHeader className="border-b bg-gray-50 dark:bg-gray-800 py-2">
+              <CardTitle className="text-sm font-medium uppercase tracking-wide">
+                {category}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4 p-4">
+              {techs.map((tech) => (
+                <div key={tech.id} className="group relative">
+                  <div className="flex justify-between items-center mb-1.5">
+                    <h3 className="text-sm font-medium">{tech.name}</h3>
+                    <span className="text-[10px] text-gray-500 tabular-nums">
+                      {tech.proficiencyLevel}/10
+                    </span>
+                  </div>
                   <ProficiencyBar level={tech.proficiencyLevel} />
-                  <span className="text-sm text-gray-500">{tech.proficiencyLevel}/10</span>
+                  <SignedIn>
+                    <div className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button 
+                        onClick={() => handleDelete(tech.id)} 
+                        disabled={isDeleting} 
+                        variant="destructive" 
+                        size="sm"
+                        className="h-6 text-[10px] px-2"
+                      >
+                        {isDeleting ? '...' : 'Delete'}
+                      </Button>
+                    </div>
+                  </SignedIn>
                 </div>
-                <p>Experience: {tech.yearsOfExperience} years</p>
-              </CardContent>
-              {isAuthenticated && (
-                <CardFooter className="justify-end">
-                  <Button 
-                    onClick={() => handleDelete(tech.id)} 
-                    disabled={isDeleting} 
-                    variant="destructive" 
-                    className="bg-white text-black"
-                  >
-                    {isDeleting ? 'Deleting...' : 'Delete'}
-                  </Button>
-                </CardFooter>
-              )}
-            </Card>
-          ))
-        )}
+              ))}
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );
