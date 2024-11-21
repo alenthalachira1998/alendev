@@ -1,6 +1,5 @@
 'use server'
 
-import { auth } from '../app/api/auth/[...nextauth]/route'
 import db from '@/db/drizzle'
 import { jobExperiences, education, techStack, projects, intro } from '@/db/schema'
 import { eq } from 'drizzle-orm'
@@ -25,20 +24,12 @@ export type State = {
   }
 }
 
-async function checkAuth() {
-  const session = await auth()
-  if (!session) {
-    throw new Error('Unauthorized')
-  }
-}
-
 export async function loadExperiences(): Promise<JobExperience[]> {
   return await db.select().from(jobExperiences)
 }
 
 export async function createExperience(prevState: State, formData: FormData): Promise<State> {
   try {
-    await checkAuth()
     const data: ExperienceFormData = {
       company: formData.get('company') as string,
       title: formData.get('title') as string,
@@ -55,7 +46,6 @@ export async function createExperience(prevState: State, formData: FormData): Pr
 
 export async function updateExperience(prevState: State, formData: FormData): Promise<State> {
   try {
-    await checkAuth()
     const id = formData.get('id') as string
     if (!id) throw new Error('ID is required for update')
 
@@ -75,7 +65,6 @@ export async function updateExperience(prevState: State, formData: FormData): Pr
 
 export async function deleteExperience(prevState: State, formData: FormData): Promise<State> {
   try {
-    await checkAuth()
     const id = formData.get('id') as string
     if (!id) throw new Error('ID is required for deletion')
 
@@ -106,7 +95,6 @@ export async function loadEducation(): Promise<Education[]> {
 
 export async function createEducation(prevState: State, formData: FormData): Promise<State> {
   try {
-    await checkAuth()
     const data: NewEducation = {
       institution: formData.get('institution') as string,
       degree: formData.get('degree') as string,
@@ -125,7 +113,6 @@ export async function createEducation(prevState: State, formData: FormData): Pro
 
 export async function updateEducation(prevState: State, formData: FormData): Promise<State> {
   try {
-    await checkAuth()
     const id = formData.get('id') as string
     if (!id) throw new Error('ID is required for update')
 
@@ -147,7 +134,7 @@ export async function updateEducation(prevState: State, formData: FormData): Pro
 
 export async function deleteEducation(prevState: State, formData: FormData): Promise<State> {
   try {
-    await checkAuth()
+  
     const id = formData.get('id') as string
     if (!id) throw new Error('ID is required for deletion')
 
@@ -165,7 +152,7 @@ export async function loadTechStack(): Promise<TechStack[]> {
 
 export async function createTechStack(prevState: State, formData: FormData): Promise<State> {
   try {
-    await checkAuth()
+  
     const name = formData.get('name') as string
     const category = formData.get('category') as string
     const proficiencyLevel = formData.get('proficiencyLevel') as string
@@ -199,7 +186,7 @@ export async function createTechStack(prevState: State, formData: FormData): Pro
 
 export async function updateTechStack(prevState: State, formData: FormData): Promise<State> {
   try {
-    await checkAuth()
+
     const id = formData.get('id') as string
     if (!id) throw new Error('ID is required for update')
 
@@ -218,7 +205,7 @@ export async function updateTechStack(prevState: State, formData: FormData): Pro
 
 export async function deleteTechStack(prevState: State, formData: FormData): Promise<State> {
   try {
-    await checkAuth()
+  
     const id = formData.get('id') as string
     if (!id) throw new Error('ID is required for deletion')
 
@@ -236,7 +223,7 @@ export async function loadProjects(): Promise<Project[]> {
 
 export async function createProject(prevState: State, formData: FormData): Promise<State> {
   try {
-    await checkAuth()
+
     const title = formData.get('title') as string
     const description = formData.get('description') as string
     const technologies = formData.get('technologies') as string
@@ -270,7 +257,7 @@ export async function createProject(prevState: State, formData: FormData): Promi
 
 export async function updateProject(prevState: State, formData: FormData): Promise<State> {
   try {
-    await checkAuth()
+
     const id = formData.get('id') as string
     if (!id) throw new Error('ID is required for update')
 
@@ -293,7 +280,7 @@ export async function updateProject(prevState: State, formData: FormData): Promi
 
 export async function deleteProject(prevState: State, formData: FormData): Promise<State> {
   try {
-    await checkAuth()
+
     const id = formData.get('id') as string
     if (!id) throw new Error('ID is required for deletion')
 
@@ -312,7 +299,7 @@ export async function loadIntro(): Promise<Intro | null> {
 
 export async function createOrUpdateIntro(prevState: State, formData: FormData): Promise<State & { shouldRefresh: boolean }> {
   try {
-    await checkAuth()
+
     const action = formData.get('action') as string
 
     if (action === 'delete') {

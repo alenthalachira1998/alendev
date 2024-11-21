@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@clerk/nextjs';
 import { deleteProject, createProject, loadProjects, updateProject } from '../../lib/actions';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -140,8 +140,8 @@ interface ProjectsDisplayProps {
 }
 
 const ProjectsDisplay: React.FC<ProjectsDisplayProps> = ({ projects: initialProjects }) => {
-  const { status } = useSession();
-  const isAuthenticated = status === 'authenticated';
+  const { userId } = useAuth();
+  const isAuthenticated = !!userId;
   const [refreshKey, setRefreshKey] = useState(0);
   const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [isLoading, setIsLoading] = useState(true);

@@ -1,9 +1,6 @@
 import React, { Suspense } from 'react';
 import { loadExperiences } from '../../lib/actions';
 import JobExperienceCRUD from '../components/ExperienceList';
-import { auth } from '../api/auth/[...nextauth]/route';
-import { redirect } from 'next/navigation';
-
 
 // Custom Loader component
 const Loader = () => (
@@ -18,26 +15,9 @@ async function ExperienceList() {
 }
 
 export default async function JobExperiencePage() {
-  try {
-    const session = await auth();
-
-    if (!session || !session.user) {
-      console.log('No session found, redirecting to login');
-      redirect('/auth/login');
-    }
-
-    console.log('Session found, user authenticated:', session.user.email);
-
-    return (
-  
-      <Suspense fallback={<Loader />}>
-    
-        <ExperienceList />
-      </Suspense>
-     
-    );
-  } catch (error) {
-    console.error('Error in authentication:', error);
-    redirect('/auth/login');
-  }
+  return (
+    <Suspense fallback={<Loader />}>
+      <ExperienceList />
+    </Suspense>
+  );
 }

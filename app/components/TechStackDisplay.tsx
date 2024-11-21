@@ -3,7 +3,7 @@ import { TechStack, createTechStack, deleteTechStack } from '../../lib/actions';
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/components/hooks/use-toast"
-import { useSession } from "next-auth/react"
+import { useAuth } from '@clerk/nextjs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -35,7 +35,8 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
   const [newTechStack, setNewTechStack] = useState({ name: '', category: '', proficiencyLevel: '', yearsOfExperience: '' });
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
   const { toast } = useToast()
-  const { data: session } = useSession()
+  const { userId } = useAuth();
+  const isAuthenticated = !!userId;
 
   const validateForm = (): boolean => {
     const newErrors: { [key: string]: string[] } = {};
@@ -95,7 +96,7 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
 
   return (
     <div className={`space-y-4 ${raleway.className}`}>
-      {session && (
+      {isAuthenticated && (
         <Dialog >
           <DialogTrigger asChild>
             <Button className="mb-4 bg-white text-black">Add Tech Stack</Button>
@@ -144,7 +145,7 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
               <p>Experience: {tech.yearsOfExperience} years</p>
             </CardContent>
             <CardFooter className="justify-end">
-              {session && (
+              {isAuthenticated && (
                 <Button onClick={() => handleDelete(tech.id)} disabled={isDeleting} variant="destructive" className="bg-white text-black">
                   {isDeleting ? 'Deleting...' : 'Delete'}
                 </Button>

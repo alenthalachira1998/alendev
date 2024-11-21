@@ -9,6 +9,7 @@ import TechStackDisplay from '../components/TechStackDisplay';
 import ProjectsDisplay from '../components/ProjectsDisplay';
 import IntroDisplay from '../components/IntroDisplay';
 import { loadExperiences, loadEducation, loadTechStack, loadIntro, loadProjects, JobExperience, Education, TechStack, Project, Intro } from '../../lib/actions';
+import { SignedIn, SignedOut } from '@clerk/nextjs';
 
 const PortfolioPage: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>('intro');
@@ -64,10 +65,12 @@ const PortfolioPage: React.FC = () => {
           <h2>Introduction</h2>
           <IntroDisplay intro={intro} isLoading={false} />
         </section>
-        <section id="tech-stack" className={`${styles.section} ${activeSection === 'tech-stack' ? styles.visible : styles.hidden}`}>
-          <h2>Tech Stack</h2>
-          <TechStackDisplay techStack={techStacks} onUpdate={refreshTechStack} />
-        </section>
+        <SignedIn>
+          <section id="tech-stack" className={`${styles.section} ${activeSection === 'tech-stack' ? styles.visible : styles.hidden}`}>
+            <h2>Tech Stack</h2>
+            <TechStackDisplay techStack={techStacks} onUpdate={refreshTechStack} />
+          </section>
+        </SignedIn>
         <section id="education" className={`${styles.section} ${activeSection === 'education' ? styles.visible : styles.hidden}`}>
           <h2>Education</h2>
           <EducationDisplay />

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog"
 import { useToast } from "@/components/hooks/use-toast"
 import { Raleway } from 'next/font/google'
-import { useSession } from "next-auth/react"
+import { useAuth } from '@clerk/nextjs'
 
 const raleway = Raleway({ subsets: ['latin'] })
 
@@ -120,8 +120,8 @@ const EditIntroDialog: React.FC<{ intro: Intro | null; onSubmit: (updatedIntro: 
 };
 
 export default function IntroDisplay({ intro, isLoading }: { intro: Intro | null; isLoading: boolean }) {
-  const { data: session } = useSession()
-  const isAuthenticated = !!session
+  const { userId } = useAuth()
+  const isAuthenticated = !!userId
 
   const onSubmit = (updatedIntro: Intro) => {
     console.log('Updated intro:', updatedIntro);

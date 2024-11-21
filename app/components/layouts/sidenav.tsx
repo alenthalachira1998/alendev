@@ -6,7 +6,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from '../../styles/SideNav.module.scss';
-
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 const navItems = [
   { href: '/', label: 'Home' },
@@ -42,7 +42,18 @@ const SideNav = () => {
             </li>
           ))}
           <li>
-           
+            <SignedOut>
+              <SignInButton mode="modal">
+                <button className={styles.signInButton}>
+                 Admin
+                </button>
+              </SignInButton>
+            </SignedOut>
+            <SignedIn>
+              <div className={styles.userSection}>
+                <UserButton  />
+              </div>
+            </SignedIn>
           </li>
         </ul>
       </nav>

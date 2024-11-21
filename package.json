@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.4.2",
+    "@clerk/nextjs": "^6.4.0",
     "@hookform/resolvers": "^3.9.0",
     "@neondatabase/serverless": "^0.9.5",
     "@next/env": "15.0.0-rc.0",

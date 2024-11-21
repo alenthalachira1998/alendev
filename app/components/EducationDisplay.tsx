@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@clerk/nextjs';
 import { Education, deleteEducation, createEducation, loadEducation } from '../../lib/actions';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -182,8 +182,8 @@ const AddEducationDialog: React.FC<{ onAdd: () => void }> = ({ onAdd }) => {
 };
 
 const EducationDisplay: React.FC = () => {
-  const { status } = useSession();
-  const isAuthenticated = status === 'authenticated';
+  const { userId } = useAuth();
+  const isAuthenticated = !!userId;
   const [educations, setEducations] = useState<Education[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
 
