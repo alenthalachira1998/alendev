@@ -335,5 +335,5 @@ function handleError(error: unknown): State {
   if (error instanceof Error && error.message === 'Unauthorized') {
     return { message: 'Unauthorized', errors: { form: ['You must be logged in to perform this action'] } }
   }
-  return { message: 'An error occurred', errors: { form: [(error as Error).message] } }
+  return { message: 'An errror occurred', errors: { form: [(error as Error).message] } }
 }
