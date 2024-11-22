@@ -54,14 +54,10 @@ export const education = pgTable('education', {
 })
 
 export const techStack = pgTable('tech_stack', {
-  id: uuid('id')
-    .default(sql`uuid_generate_v4()`)
-    .primaryKey()
-    .notNull(),
-  name: varchar('name', { length: 100 }).notNull(),
-  category: varchar('category', { length: 100 }).notNull(),
+  id: uuid('id').defaultRandom().primaryKey(),
+  name: text('name').notNull(),
+  category: text('category').notNull(),
   proficiencyLevel: integer('proficiency_level').notNull(),
-  yearsOfExperience: integer('years_of_experience').notNull(),
 })
 
 export const projects = pgTable('projects', {

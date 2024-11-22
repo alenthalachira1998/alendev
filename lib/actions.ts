@@ -180,35 +180,43 @@ export async function loadTechStack(): Promise<TechStack[]> {
 
 export async function createTechStack(prevState: State, formData: FormData): Promise<State> {
   try {
-  
-    const name = formData.get('name') as string
-    const category = formData.get('category') as string
-    const proficiencyLevel = formData.get('proficiencyLevel') as string
-    const yearsOfExperience = formData.get('yearsOfExperience') as string
+    const name = formData.get('name') as string;
+    const category = formData.get('category') as string;
+    const proficiencyLevel = formData.get('proficiencyLevel') as string;
 
-    const errors: { [key: string]: string[] } = {}
+    console.log('Received data:', { name, category, proficiencyLevel });
 
-    if (!name) errors.name = ['Name is required']
-    if (!category) errors.category = ['Category is required']
-    if (!proficiencyLevel) errors.proficiencyLevel = ['Proficiency level is required']
-    else if (isNaN(parseInt(proficiencyLevel))) errors.proficiencyLevel = ['Proficiency level must be a number']
-    if (!yearsOfExperience) errors.yearsOfExperience = ['Years of experience is required']
-    else if (isNaN(parseInt(yearsOfExperience))) errors.yearsOfExperience = ['Years of experience must be a number']
+    const errors: { [key: string]: string[] } = {};
+
+    if (!name) errors.name = ['Name is required'];
+    if (!category) errors.category = ['Category is required'];
+    if (!proficiencyLevel) errors.proficiencyLevel = ['Proficiency level is required'];
+    else if (isNaN(parseInt(proficiencyLevel))) {
+      errors.proficiencyLevel = ['Proficiency level must be a number'];
+    }
 
     if (Object.keys(errors).length > 0) {
-      return { message: undefined, errors }
+      console.log('Validation errors:', errors);
+      return { message: undefined, errors };
     }
 
     const data: NewTechStack = {
       name,
       category,
       proficiencyLevel: parseInt(proficiencyLevel),
-      yearsOfExperience: parseInt(yearsOfExperience),
-    }
-    await db.insert(techStack).values(data)
-    return { message: 'Tech Stack created successfully', errors: {} }
+    };
+    
+    console.log('Inserting data:', data);
+    await db.insert(techStack).values(data);
+    return { message: 'Tech Stack created successfully', errors: {} };
   } catch (error) {
-    return handleError(error)
+    console.error('Error creating tech stack:', error);
+    return {
+      message: undefined,
+      errors: {
+        form: ['An unexpected error occurred while creating tech stack']
+      }
+    };
   }
 }
 
@@ -222,7 +230,6 @@ export async function updateTechStack(prevState: State, formData: FormData): Pro
       name: formData.get('name') as string,
       category: formData.get('category') as string,
       proficiencyLevel: parseInt(formData.get('proficiencyLevel') as string),
-      yearsOfExperience: parseInt(formData.get('yearsOfExperience') as string),
     }
     await db.update(techStack).set(data).where(eq(techStack.id, id))
     return { message: 'Tech Stack updated successfully', errors: {} }

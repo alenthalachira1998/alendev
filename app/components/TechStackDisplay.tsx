@@ -27,9 +27,9 @@ const ProficiencyBar: React.FC<{ level: number }> = ({ level }) => {
   };
 
   return (
-    <div className="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
+    <div className="w-full bg-gray-200 rounded-full h-1 dark:bg-gray-700">
       <div 
-        className={`${getColorClass(level)} h-1.5 rounded-full transition-all duration-500 ease-in-out`}
+        className={`${getColorClass(level)} h-1 rounded-full transition-all duration-500 ease-in-out`}
         style={{ width: `${percentage}%` }}
       ></div>
     </div>
@@ -47,6 +47,7 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
   const { toast } = useToast()
   const { userId } = useAuth();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const validateForm = (): boolean => {
     const newErrors: { [key: string]: string[] } = {};
@@ -67,51 +68,81 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
   const handleAdd = async () => {
     if (!validateForm()) return;
 
-    setIsLoading(true);
-    setErrors({});
-    const formData = new FormData();
-    formData.append('name', newTechStack.name);
-    formData.append('category', newTechStack.category);
-    formData.append('proficiencyLevel', newTechStack.proficiencyLevel);
-    
-    const result = await createTechStack({ message: '', errors: {} }, formData);
-    setIsLoading(false);
-    if (result.message) {
+    try {
+      setIsLoading(true);
+      setErrors({});
+      
+      const formData = new FormData();
+      formData.append('name', newTechStack.name.trim());
+      formData.append('category', newTechStack.category.trim());
+      formData.append('proficiencyLevel', newTechStack.proficiencyLevel.trim());
+      
+      console.log('Sending data:', Object.fromEntries(formData));
+      
+      const result = await createTechStack({ message: '', errors: {} }, formData);
+      
+      if (result.message) {
+        toast({
+          title: "Success",
+          description: result.message,
+        });
+        setNewTechStack({ name: '', category: '', proficiencyLevel: '' });
+        onUpdate();
+      } else if (result.errors) {
+        console.log('Received errors:', result.errors);
+        setErrors(Object.fromEntries(
+          Object.entries(result.errors)
+            .filter(([_, value]) => value !== undefined)
+            .map(([key, value]) => [key, value as string[]])
+        ));
+        toast({
+          title: "Error",
+          description: result.errors.form?.[0] || "Failed to add tech stack",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error in handleAdd:', error);
       toast({
-        title: "Tech Stack Added",
-        description: result.message,
-      })
-      setNewTechStack({ name: '', category: '', proficiencyLevel: '' });
-      onUpdate();
-    } else if (result.errors) {
-      const formattedErrors = Object.fromEntries(
-        Object.entries(result.errors).map(([key, value]) => [
-          key,
-          Array.isArray(value) ? value : [(value as any)?.toString() || '']
-        ])
-      );
-      setErrors(formattedErrors);
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    setIsDeleting(true);
-    const formData = new FormData();
-    formData.append('id', id);
-    const result = await deleteTechStack({ message: '', errors: {} }, formData);
-    setIsDeleting(false);
-    if (result.message) {
-      toast({
-        title: "Tech Stack Deleted",
-        description: result.message,
-      })
-      onUpdate();
-    } else if (result.errors?.form) {
+    try {
+      setDeletingId(id);
+      const formData = new FormData();
+      formData.append('id', id);
+      
+      const result = await deleteTechStack({ message: '', errors: {} }, formData);
+      
+      if (result.message) {
+        toast({
+          title: "Success",
+          description: result.message,
+        });
+        onUpdate();
+      } else if (result.errors?.form) {
+        toast({
+          title: "Error",
+          description: result.errors.form[0],
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting tech stack:', error);
       toast({
         title: "Error",
-        description: result.errors.form[0],
+        description: "Failed to delete tech stack",
         variant: "destructive",
-      })
+      });
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -125,7 +156,7 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
   }, {} as { [key: string]: TechStack[] });
 
   return (
-    <div className={`w-full max-w-[800px] px-4 sm:px-6 mx-auto space-y-6 ${raleway.className}`}>
+    <div className={`w-full max-w-[800px] px-4 sm:px-6 mx-auto space-y-4 ${raleway.className}`}>
       <SignedIn>
         <Dialog>
           <DialogTrigger asChild>
@@ -164,34 +195,37 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
         </Dialog>
       </SignedIn>
 
-      <div className={`${raleway.className} grid grid-cols-1 md:grid-cols-2 gap-4`}>
+      <div className="space-y-4">
         {Object.entries(groupedTechStack).map(([category, techs]) => (
-          <Card key={category} className="overflow-hidden border-none shadow-sm">
-            <CardHeader className="border-b bg-gray-50 dark:bg-gray-800 py-2">
-              <CardTitle className="text-sm font-medium uppercase tracking-wide">
+          <Card 
+            key={category} 
+            className="overflow-hidden border-none shadow-sm w-full"
+          >
+            <CardHeader className="border-b bg-gray-50 dark:bg-gray-800 py-1">
+              <CardTitle className="text-xs font-medium uppercase tracking-wide">
                 {category}
               </CardTitle>
             </CardHeader>
-            <CardContent className="grid gap-4 p-4">
+            <CardContent className="grid gap-1.5 p-2">
               {techs.map((tech) => (
-                <div key={tech.id} className="group relative">
-                  <div className="flex justify-between items-center mb-1.5">
-                    <h3 className="text-sm font-medium">{tech.name}</h3>
-                    <span className="text-[10px] text-gray-500 tabular-nums">
+                <div key={tech.id} className="group relative py-0.5">
+                  <div className="flex justify-between items-center mb-1">
+                    <h3 className="text-xs font-medium">{tech.name}</h3>
+                    <span className="text-[9px] text-gray-500 tabular-nums">
                       {tech.proficiencyLevel}/10
                     </span>
                   </div>
                   <ProficiencyBar level={tech.proficiencyLevel} />
                   <SignedIn>
-                    <div className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="absolute right-0 top-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button 
                         onClick={() => handleDelete(tech.id)} 
-                        disabled={isDeleting} 
+                        disabled={deletingId === tech.id} 
                         variant="destructive" 
                         size="sm"
-                        className="h-6 text-[10px] px-2"
+                        className="h-5 text-[9px] px-1.5"
                       >
-                        {isDeleting ? '...' : 'Delete'}
+                        {deletingId === tech.id ? '...' : 'Delete'}
                       </Button>
                     </div>
                   </SignedIn>
