@@ -7,6 +7,8 @@ import './styles/globals.scss'
 import './styles/globals.css'
 import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import * as React from 'react';
+import { Analytics } from '@vercel/analytics/react';
+import GoogleVerification from './components/GoogleVerification';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,9 +23,6 @@ const raleway = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://alendev.vercel.app/'),
-  verification: {
-    google: 'IlGE16h2m3PyUgb_FNU3go58vBiXv60KZQLrFx7qqZw', // Add this
-  },
   title: "Alen Jose | Alen Thalachira | Software Developer",
   description: "I'm Alen Jose (Alen Thalachira), a fullstack web/mobile Software developer with years of experience in JavaScript, React, Node.js, and modern web technologies. Based in Waterloo, Ontario, specializing in building scalable applications.",
   keywords: [
@@ -58,7 +57,17 @@ export const metadata: Metadata = {
   authors: [{ name: "Alen Jose Thalachira" }],
   creator: "Alen Jose Thalachira",
   publisher: "Alen Jose",
-  robots: "index, follow",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   openGraph: {
     type: "website",
     locale: "en_CA",
@@ -94,9 +103,14 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
+        <head>
+          <GoogleVerification />
+        </head>
         <body className={`${inter.className} ${digitalFont.variable} ${raleway.variable} bg-slate-900`}>
-       
-          <Providers>{children}</Providers>
+          <Providers>
+            {children}
+          </Providers>
+          <Analytics />
         </body>
       </html>
     </ClerkProvider>
