@@ -9,16 +9,15 @@ import TechStackDisplay from '../components/TechStackDisplay';
 import ProjectsDisplay from '../components/ProjectsDisplay';
 import IntroDisplay from '../components/IntroDisplay';
 import { loadExperiences, loadEducation, loadTechStack, loadIntro, loadProjects, JobExperience, Education, TechStack, Project, Intro } from '../../lib/actions';
-import { SignedIn, SignedOut } from '@clerk/nextjs';
 
 const PortfolioPage: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>('intro');
   const [experiences, setExperiences] = useState<JobExperience[]>([]);
   const [techStacks, setTechStacks] = useState<TechStack[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [intro, setIntro] = useState<Intro | null>(null);
 
   const handleSectionChange = (section: string) => {
-    console.log('Changing section to:', section);
     setActiveSection(section);
     window.history.pushState(null, '', `#${section}`);
   };
@@ -34,9 +33,8 @@ const PortfolioPage: React.FC = () => {
     };
 
     window.addEventListener('hashchange', handleHashChange);
-    handleHashChange(); // Set initial section on page load
+    handleHashChange();
 
-    // Load all data
     loadExperiences().then(setExperiences);
     loadTechStack().then(setTechStacks);
     loadIntro().then(setIntro);
@@ -50,34 +48,27 @@ const PortfolioPage: React.FC = () => {
     };
   }, []);
 
-  const [intro, setIntro] = useState<Intro | null>(null);
-
   return (
     <div className={styles.portfolioContainer}>
       <TabNavigator 
-        profilePicSrc="/images/avtar1.png" 
         activeSection={activeSection}
         onSectionChange={handleSectionChange}
       />
  
       <main className={styles.content}>
         <section id="intro" className={`${styles.section} ${activeSection === 'intro' ? styles.visible : styles.hidden}`}>
-         
           <IntroDisplay intro={intro} isLoading={false} />
         </section>
         <section id="tech-stack" className={`${styles.section} ${activeSection === 'tech-stack' ? styles.visible : styles.hidden}`}>
           <TechStackDisplay techStack={techStacks} onUpdate={refreshTechStack} />
         </section>
         <section id="education" className={`${styles.section} ${activeSection === 'education' ? styles.visible : styles.hidden}`}>
-      
           <EducationDisplay />
         </section>
         <section id="experience" className={`${styles.section} ${activeSection === 'experience' ? styles.visible : styles.hidden}`}>
-        
           <ExperienceDisplay experiences={experiences} />
         </section>
         <section id="projects" className={`${styles.section} ${activeSection === 'projects' ? styles.visible : styles.hidden}`}>
-       
           <ProjectsDisplay projects={projects.map(project => ({
             ...project,
             technologies: Array.isArray(project.technologies) ? project.technologies : []

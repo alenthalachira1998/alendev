@@ -1,9 +1,13 @@
+'use client'
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { Education, deleteEducation, createEducation, loadEducation } from '../../lib/actions';
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+import { Card, CardContent } from "@/components/ui/card"
+import { useToast } from "@/components/hooks/use-toast"
+import { Raleway } from 'next/font/google'
+import { CalendarIcon, BookOpenIcon, GraduationCapIcon } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -12,11 +16,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Card, CardContent } from "@/components/ui/card"
-import { useToast } from "@/components/hooks/use-toast"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Raleway } from 'next/font/google'
-import { CalendarIcon, BookOpenIcon, GraduationCapIcon } from 'lucide-react'
 
 const raleway = Raleway({ subsets: ['latin'] })
 
@@ -209,45 +211,42 @@ const EducationDisplay: React.FC = () => {
   }, [refreshKey]);
 
   return (
-    <div className={`w-full max-w-[800px] px-4 mx-auto ${raleway.className}`}>
+    <div className={`w-full max-w-[800px] px-0 sm:px-4 mx-auto ${raleway.className}`}>
       {isAuthenticated && (
-        <div className="mb-6">
+        <div className="mb-4">
           <AddEducationDialog onAdd={refreshData} />
         </div>
       )}
-      
-      <div className="hidden md:block absolute left-1/2 h-full w-0.5 bg-gray-200 transform -translate-x-1/2">
-        <div className="absolute top-0 left-1/2 w-3 h-3 rounded-full bg-black border-2 border-white transform -translate-x-1/2"></div>
-        <div className="absolute bottom-0 left-1/2 w-3 h-3 rounded-full bg-black border-2 border-white transform -translate-x-1/2"></div>
-      </div>
 
-      {educations.map((edu, index) => (
-        <div key={edu.id} className="relative mb-8 group">
-          <div className="hidden md:block absolute left-1/2 top-5 w-4 h-4 bg-black rounded-full transform -translate-x-1/2 border-2 border-white z-10 shadow-md transition-all duration-300 group-hover:scale-110"></div>
-          
-          <Card className="md:w-[calc(50%-2rem)] md:even:ml-[calc(50%+2rem)] shadow-sm hover:shadow-md transition-all duration-300 border-none">
-            <CardContent className="p-4 sm:p-5">
+      {educations.map((edu) => (
+        <div key={edu.id} className="mb-4 w-full">
+          <Card className="shadow-sm hover:shadow-md transition-all duration-300 w-full rounded-lg sm:rounded-xl">
+            <CardContent className="p-3">
               <div className="flex items-center mb-2">
-                <GraduationCapIcon className="w-3 h-3 text-gray-600 mr-2" />
-                <h3 className="text-xs sm:text-sm font-medium">{edu.degree} in {edu.fieldOfStudy}</h3>
+                <GraduationCapIcon className="w-4 h-4 text-primary mr-2" />
+                <h3 className="text-base font-medium">
+                  {edu.degree} in {edu.fieldOfStudy}
+                </h3>
               </div>
               
-              <h4 className="text-[10px] sm:text-xs text-gray-600 mb-3">{edu.institution}</h4>
+              <h4 className="text-sm text-gray-600 mb-2">
+                {edu.institution}
+              </h4>
               
-              <p className="text-[10px] sm:text-xs text-gray-600 leading-relaxed">
+              <p className="text-xs text-gray-700 leading-relaxed">
                 {edu.description}
               </p>
               
-              <div className="mt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-[9px] sm:text-[10px] text-gray-500">
-                <div className="flex items-center">
-                  <CalendarIcon className="w-3 h-3 mr-1" />
+              <div className="mt-3 flex flex-col sm:flex-row justify-between items-start sm:items-center text-[10px] text-gray-500">
+                <div className="w-full sm:w-auto mb-2 sm:mb-0 flex items-center">
+                  <CalendarIcon className="w-4 h-4 mr-2" />
                   <span>{edu.startDate} - {edu.endDate}</span>
                 </div>
                 
                 {edu.grade && (
-                  <div className="flex items-center">
-                    <BookOpenIcon className="w-3 h-3 mr-1" />
-                    <span className="font-medium text-black">
+                  <div className="w-full sm:w-auto flex items-center">
+                    <BookOpenIcon className="w-4 h-4 mr-2" />
+                    <span className="font-medium text-black text-xs">
                       Grade: {edu.grade}
                     </span>
                   </div>
@@ -255,7 +254,7 @@ const EducationDisplay: React.FC = () => {
               </div>
 
               {isAuthenticated && (
-                <div className="mt-4 flex justify-end">
+                <div className="mt-3">
                   <DeleteEducationButton 
                     id={edu.id} 
                     onDelete={refreshData}

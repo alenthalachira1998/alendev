@@ -171,9 +171,9 @@ const ProjectsDisplay: React.FC<ProjectsDisplayProps> = ({ projects: initialProj
   }, [refreshKey]);
 
   return (
-    <div className="w-full max-w-[800px] px-4 mx-auto space-y-6">
+    <div className={`w-full max-w-[800px] px-0 sm:px-4 mx-auto ${raleway.className}`}>
       {isAuthenticated && (
-        <div className="w-full">
+        <div className="w-full mb-4">
           <AddEditProjectDialog project={null} onSubmit={refreshData} />
         </div>
       )}
@@ -182,19 +182,21 @@ const ProjectsDisplay: React.FC<ProjectsDisplayProps> = ({ projects: initialProj
         <p>Loading...</p>
       ) : !projects || projects.length === 0 ? (
         <Card className="border-none shadow-sm w-full">
-          <CardContent className="pt-6">
+          <CardContent className="p-4">
             <p className="text-sm text-gray-500">No projects available.</p>
           </CardContent>
         </Card>
       ) : (
-        <div className={`${raleway.className} space-y-4 w-full`}>
+        <div className="space-y-4 w-full">
           {projects.map((project) => (
-            <Card key={project.id} className="overflow-hidden border-none shadow-sm w-full">
-              <CardHeader className="border-b bg-gray-50 dark:bg-gray-800 py-3 px-4">
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+            <Card key={project.id} className="overflow-hidden border-none shadow-sm hover:shadow-md transition-all duration-300 w-full">
+              <CardHeader className="border-b bg-gray-50 p-3">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
                   <div>
-                    <CardTitle className="text-[13px] sm:text-sm font-medium">{project.title}</CardTitle>
-                    <CardDescription className="text-[10px] sm:text-xs mt-1">
+                    <CardTitle className="text-sm font-medium">
+                      {project.title}
+                    </CardTitle>
+                    <CardDescription className="text-[10px] mt-0.5">
                       {project.startDate} - {project.endDate || 'Present'}
                     </CardDescription>
                   </div>
@@ -206,14 +208,16 @@ const ProjectsDisplay: React.FC<ProjectsDisplayProps> = ({ projects: initialProj
                   )}
                 </div>
               </CardHeader>
-              <CardContent className="p-4 space-y-3">
-                <p className="text-[11px] sm:text-xs text-gray-600">{project.description}</p>
+              <CardContent className="p-3 space-y-2">
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  {project.description}
+                </p>
                 
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1">
                   {project.technologies.map((tech, index) => (
                     <span 
                       key={index}
-                      className="px-2 py-1 bg-gray-100 text-gray-700 rounded-md text-[9px] sm:text-[10px] font-medium"
+                      className="px-1.5 py-0.5 bg-gray-100 text-gray-700 rounded text-[10px] font-medium"
                     >
                       {tech}
                     </span>
@@ -221,13 +225,13 @@ const ProjectsDisplay: React.FC<ProjectsDisplayProps> = ({ projects: initialProj
                 </div>
 
                 {(project.githubUrl || project.liveUrl) && (
-                  <div className="flex gap-3 pt-2">
+                  <div className="flex gap-3 sm:gap-4 pt-2">
                     {project.githubUrl && (
                       <a 
                         href={project.githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[10px] sm:text-xs text-gray-600 hover:text-black transition-colors"
+                        className="text-xs sm:text-base text-gray-600 hover:text-black transition-colors flex items-center gap-1.5"
                       >
                         GitHub →
                       </a>
@@ -237,7 +241,7 @@ const ProjectsDisplay: React.FC<ProjectsDisplayProps> = ({ projects: initialProj
                         href={project.liveUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[10px] sm:text-xs text-gray-600 hover:text-black transition-colors"
+                        className="text-xs sm:text-base text-gray-600 hover:text-black transition-colors flex items-center gap-1.5"
                       >
                         Live Demo →
                       </a>
@@ -249,7 +253,7 @@ const ProjectsDisplay: React.FC<ProjectsDisplayProps> = ({ projects: initialProj
                   <img 
                     src={project.imageUrl} 
                     alt={project.title} 
-                    className="w-full h-auto rounded-md mt-3 object-cover"
+                    className="w-full h-auto rounded-md sm:rounded-lg mt-3 sm:mt-4 object-cover shadow-sm"
                   />
                 )}
               </CardContent>

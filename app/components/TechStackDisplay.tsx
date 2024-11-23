@@ -18,24 +18,6 @@ interface TechStackDisplayProps {
   onUpdate: () => void;
 }
 
-const ProficiencyBar: React.FC<{ level: number }> = ({ level }) => {
-  const percentage = (level / 10) * 100;
-  const getColorClass = (level: number) => {
-    if (level >= 8) return 'bg-black';
-    if (level >= 5) return 'bg-gray-700';
-    return 'bg-gray-500';
-  };
-
-  return (
-    <div className="w-full bg-gray-200 rounded-full h-1 dark:bg-gray-700">
-      <div 
-        className={`${getColorClass(level)} h-1 rounded-full transition-all duration-500 ease-in-out`}
-        style={{ width: `${percentage}%` }}
-      ></div>
-    </div>
-  );
-};
-
 const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -165,7 +147,7 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
   }, {} as { [key: string]: TechStack[] });
 
   return (
-    <div className={`w-full max-w-[800px] px-4 sm:px-6 mx-auto space-y-4 ${raleway.className}`}>
+    <div className={`w-full max-w-[800px] px-0 sm:px-4 mx-auto space-y-4 ${raleway.className}`}>
       <SignedIn>
         <Dialog>
           <DialogTrigger asChild>
@@ -204,35 +186,40 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
         </Dialog>
       </SignedIn>
 
-      <div className="space-y-4">
+      <div className="space-y-4 w-full">
         {Object.entries(groupedTechStack).map(([category, techs]) => (
           <Card 
             key={category} 
-            className="overflow-hidden border-none shadow-sm w-full"
+            className="overflow-hidden border-none shadow-sm hover:shadow-md transition-all duration-300 w-full"
           >
-            <CardHeader className="border-b bg-gray-50 dark:bg-gray-800 py-1">
+            <CardHeader className="border-b bg-gray-50 p-3">
               <CardTitle className="text-xs font-medium uppercase tracking-wide">
                 {category}
               </CardTitle>
             </CardHeader>
-            <CardContent className="grid gap-1.5 p-2">
+            <CardContent className="grid gap-2 p-3">
               {techs.map((tech) => (
-                <div key={tech.id} className="group relative py-0.5">
+                <div key={tech.id} className="group relative py-1">
                   <div className="flex justify-between items-center mb-1">
                     <h3 className="text-xs font-medium">{tech.name}</h3>
-                    <span className="text-[9px] text-gray-500 tabular-nums">
+                    <span className="text-[10px] text-gray-500 tabular-nums">
                       {tech.proficiencyLevel}/10
                     </span>
                   </div>
-                  <ProficiencyBar level={tech.proficiencyLevel} />
+                  <div className="w-full bg-gray-200 rounded-full h-1 dark:bg-gray-700">
+                    <div 
+                      className={`${getColorClass(tech.proficiencyLevel)} h-1 rounded-full transition-all duration-500 ease-in-out`}
+                      style={{ width: `${(tech.proficiencyLevel / 10) * 100}%` }}
+                    />
+                  </div>
                   <SignedIn>
-                    <div className="absolute right-0 top-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="absolute right-0 top-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button 
                         onClick={() => handleDelete(tech.id)} 
                         disabled={deletingId === tech.id} 
                         variant="destructive" 
                         size="sm"
-                        className="h-5 text-[9px] px-1.5"
+                        className="h-7 text-xs px-3"
                       >
                         {deletingId === tech.id ? '...' : 'Delete'}
                       </Button>
@@ -246,6 +233,12 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
       </div>
     </div>
   );
+};
+
+const getColorClass = (level: number) => {
+  if (level >= 8) return 'bg-black';
+  if (level >= 5) return 'bg-gray-700';
+  return 'bg-gray-500';
 };
 
 export default TechStackDisplay;
