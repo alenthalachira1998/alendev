@@ -23,46 +23,53 @@ const raleway = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://alendev.vercel.app/'),
-  title: "Alen Jose | Alen Thalachira | Software Developer",
-  description: "I'm Alen Jose , Allen Jose (Alen Thalachira), a fullstack web/mobile Software developer with years of experience in JavaScript, React, Node.js, and modern web technologies. Based in Waterloo, Ontario, specializing in building scalable applications.",
+  title: {
+    default: "Alen Jose | Alen Thalachira | Software Developer",
+    template: "%s | Alen Jose",
+  },
+  description: "I'm Alen Jose, Allen Jose (Alen Thalachira), a fullstack web/mobile Software developer with years of experience in JavaScript, React, Node.js, and modern web technologies. Based in Waterloo, Ontario, specializing in building scalable applications.",
   keywords: [
     "Alen Jose",
+    "Allen Jose",
     "Alen Thalachira",
     "Alen Jose Thalachira",
-    "Software Developer",
-    "Full Stack Developer",
-    "Web Developer",
-    "Mobile Developer",
-    "JavaScript Developer",
-    "React Developer",
+    "Software Developer Waterloo",
+    "Full Stack Developer Ontario",
+    "Web Developer Canada",
+    "Mobile Developer Waterloo",
+    "JavaScript Developer Ontario",
+    "React Developer Canada",
     "Node.js Developer",
-    "TypeScript",
-    "Next.js",
+    "TypeScript Expert",
+    "Next.js Developer",
     "Frontend Development",
     "Backend Development",
-    "Waterloo",
-    "Ontario",
-    "Canada",
-    "Software Engineering",
-    "Web Applications",
-    "Mobile Applications",
-    "REST API",
-    "Database Design",
+    "Waterloo Software Engineer",
+    "Ontario Tech Professional",
+    "Canada Developer",
+    "Web Applications Expert",
+    "Mobile Applications Developer",
+    "REST API Developer",
+    "Database Design Expert",
     "UI/UX Development",
-    "Cloud Computing",
-    "AWS",
-    "DevOps",
-    "Agile Development"
+    "Cloud Computing AWS",
+    "DevOps Engineer",
+    "Agile Development Expert"
   ],
-  authors: [{ name: "Alen Jose Thalachira" }],
+  authors: [{ 
+    name: "Alen Jose Thalachira",
+    url: "https://github.com/alenthalachira1998"
+  }],
   creator: "Alen Jose Thalachira",
   publisher: "Alen Jose",
   robots: {
     index: true,
     follow: true,
+    nocache: true,
     googleBot: {
       index: true,
       follow: true,
+      noimageindex: false,
       'max-video-preview': -1,
       'max-image-preview': 'large',
       'max-snippet': -1,
@@ -80,19 +87,28 @@ export const metadata: Metadata = {
         url: "/images/banner.png",
         width: 1200,
         height: 630,
-        alt: "Alen Jose Thalachira - Software Developer",
+        alt: "Alen Jose Thalachira - Software Developer Portfolio",
+        type: "image/png",
       },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Alen Jose | Alen Thalachira | Full Stack Developer",
-    description: "Full Stack Developer specializing in modern web technologies. Based in Waterloo, Ontario.",
-    images: ["/images/banner.png"],
+    ]
   },
   alternates: {
     canonical: "https://alenthalachira.com",
+    languages: {
+      'en-US': 'https://alendev.vercel.app',
+      'en-CA': 'https://alendev.vercel.app'
+    },
   },
+  verification: {
+    google: "IlGE16h2m3PyUgb_FNU3go58vBiXv60KZQLrFx7qqZw",
+    other: {
+      me: [
+        'https://github.com/alenthalachira1998',
+        'https://www.linkedin.com/in/alen-j-723156272/'
+      ]
+    }
+  },
+  category: 'technology',
 };
 
 export default function RootLayout({
@@ -105,6 +121,10 @@ export default function RootLayout({
       <html lang="en">
         <head>
           <GoogleVerification />
+          <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+          <link rel="canonical" href="https://alendev.vercel.app/" />
+          <link rel="me" href="https://github.com/alenthalachira1998" />
+          <link rel="me" href="https://www.linkedin.com/in/alen-j-723156272/" />
         </head>
         <body className={`${inter.className} ${digitalFont.variable} ${raleway.variable} bg-slate-900`}>
           <Providers>
