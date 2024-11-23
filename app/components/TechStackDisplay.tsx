@@ -146,8 +146,17 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
     }
   };
 
-  // Group tech stack by category
-  const groupedTechStack = techStack.reduce((acc, tech) => {
+  // Add null check and default to empty array
+  const safeTechStack = Array.isArray(techStack) ? techStack : [];
+  console.log('Production Debug - techStack:', { 
+    original: techStack,
+    isArray: Array.isArray(techStack),
+    length: safeTechStack.length 
+  });
+
+  // Use safeTechStack instead of techStack
+  const groupedTechStack = safeTechStack.reduce((acc, tech) => {
+    if (!tech?.category) return acc; // Skip if category is missing
     if (!acc[tech.category]) {
       acc[tech.category] = [];
     }
