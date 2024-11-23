@@ -139,20 +139,7 @@ export default function IntroDisplay({ intro, isLoading }: { intro: Intro | null
   }
 
   if (!intro) {
-    return (
-      <div className="w-full max-w-[800px] px-4 mx-auto">
-        <Card className="border-none shadow-sm">
-          <CardContent className="p-6 sm:p-8">
-            <p className="text-sm text-gray-500">No introduction available.</p>
-            {isAuthenticated && (
-              <div className="mt-4">
-                <EditIntroDialog intro={null} onSubmit={() => {}} />
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return null;
   }
 
   return (

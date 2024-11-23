@@ -2,14 +2,12 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from '../../styles/tabNavigation.module.scss';
-import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { 
   FaHome, 
   FaLaptopCode, 
   FaUniversity, 
   FaBriefcase, 
-  FaCodeBranch,
-  FaSignInAlt
+  FaCodeBranch
 } from 'react-icons/fa';
 
 interface NavItem {
@@ -71,16 +69,6 @@ const TabNavigator: React.FC<TabNavigatorProps> = ({ activeSection, onSectionCha
               </Link>
             </li>
           ))}
-          <SignedOut>
-            <li>
-              <Link
-                href="/signin"
-                className={styles.navLink}
-              >
-                SIGN IN
-              </Link>
-            </li>
-          </SignedOut>
         </ul>
       </div>
       
@@ -98,17 +86,6 @@ const TabNavigator: React.FC<TabNavigatorProps> = ({ activeSection, onSectionCha
               </Link>
             </li>
           ))}
-          <SignedOut>
-            <li>
-              <Link
-                href="/signin"
-                className={styles.mobileNavLink}
-              >
-                <span className={styles.icon}><FaSignInAlt /></span>
-                <span className={styles.label}>SIGN IN</span>
-              </Link>
-            </li>
-          </SignedOut>
         </ul>
       </div>
     </nav>
