@@ -156,7 +156,7 @@ const TechStackDisplay: React.FC<TechStackDisplayProps> = ({ techStack, onUpdate
 
   // Use safeTechStack instead of techStack
   const groupedTechStack = safeTechStack.reduce((acc, tech) => {
-    if (!tech?.category) return acc; // Skip ii if category is missing
+    if (!tech?.category) return acc; // Skip if category is missing
     if (!acc[tech.category]) {
       acc[tech.category] = [];
     }
